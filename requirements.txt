@@ -7,4 +7,7 @@ Groq
 flask
 pypdf
 python-dotenv
+pinecone-client
+pandas
+numpy
 -e .
