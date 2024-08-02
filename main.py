@@ -1,40 +1,48 @@
-from src.data_loader import load_pdf, text_split
-from src.embedding import load_embeddings
-from src.indexer import generate_embeddings, upsert_embeddings, query_index
-from src.response_generator import generate_response
+from flask import render_template, jsonify, request
+from app import app
+from app.helper import download_hugging_face_embeddings
+from app.pinecone_manager import init_pinecone, generate_embeddings, upsert_embeddings, query_index
+from langchain.vectorstores import Pinecone
+from langchain.prompts import PromptTemplate
+from langchain.llms import CTransformers
+from langchain.chains import RetrievalQA
+from dotenv import load_dotenv
+from app.prompt import prompt_template
+import os
 
-def main():
-    # Load and process data
-    extracted_data = load_pdf("D:/Medical_chatbot/data/")
-    text_chunks = text_split(extracted_data)
-    
-    # Initialize embeddings
-    embeddings = load_embeddings()
-    
-    # Generate and upsert embeddings
-    embedded_texts = generate_embeddings(text_chunks, embeddings)
-    upsert_embeddings(embedded_texts)
-    
-    # Perform a query
-    question = "What causes asthma?"
-    query_results = query_index(question, embeddings)
-    
-    # Map chunk IDs to text content
-    id_to_text = {doc['id']: doc['metadata']['text'] for doc in embedded_texts}
-    
-    # Extract and print results
-    for match in query_results['matches']:
-        chunk_id = match['id']
-        score = match['score']
-        text_content = id_to_text.get(chunk_id, "Text not found")
-        print(f"Chunk ID: {chunk_id}")
-        print(f"Score: {score}")
-        print(f"Text Content: {text_content}\n")
-    
-    # Generate final response
-    context = "\n".join([id_to_text[match['id']] for match in query_results['matches']])
-    response = generate_response(question, context)
-    print("Final Response:", response)
+load_dotenv()
 
-if __name__ == "__main__":
-    main()
+embeddings = download_hugging_face_embeddings()
+
+# Initialize Pinecone and load the index
+index = init_pinecone()
+docsearch = Pinecone.from_existing_index(index, embeddings)
+
+PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+
+chain_type_kwargs = {"prompt": PROMPT}
+
+llm = CTransformers(
+    model="model/llama-2-7b-chat.ggmlv3.q4_0.bin",
+    model_type="llama",
+    config={'max_new_tokens': 512, 'temperature': 0.8}
+)
+
+qa = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=docsearch.as_retriever(search_kwargs={'k': 2}),
+    return_source_documents=True,
+    chain_type_kwargs=chain_type_kwargs
+)
+
+@app.route("/")
+def index():
+    return render_template('chat.html')
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    question = request.json.get("question")
+    results = query_index(question, embeddings)
+    answer = qa({"question": question, "context": results})
+    return jsonify(answer)
