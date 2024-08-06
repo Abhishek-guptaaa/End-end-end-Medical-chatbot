@@ -6,7 +6,8 @@ This project is an end-to-end solution for a medical chatbot using Pinecone, Lan
 
 - `data/`: Contains PDF files with medical information.
 - `env/`: Contains environment variables.
-- `src/`: Contains the source code.
+- `reserch`: simple coding
+- `modules/`: Contains the source code.
 - `requirements.txt`: Lists the project dependencies.
 - `README.md`: This file.
 
