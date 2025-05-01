@@ -1,37 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Medical Chatbot</title>
-</head>
-<body>
-    <h1>Medical Chatbot</h1>
-    <form id="query-form">
-        <label for="query">Enter your query:</label>
-        <input type="text" id="query" name="query">
-        <button type="submit">Submit</button>
-    </form>
-    <div id="response"></div>
-
-    <script>
-        document.getElementById('query-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const query = document.getElementById('query').value;
-            const response = await fetch('/query', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ query })
-            });
-            const data = await response.json();
-            document.getElementById('response').innerText = data.response;
-        });
-    </script>
-</body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +6,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #000000;
             margin: 0;
             padding: 0;
             display: flex;
@@ -53,13 +19,13 @@
             width: 60%;
             margin: 0 auto;
             padding: 20px;
-            background: #fff;
+            background: #ece9e9;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 10px;
         }
 
         h1 {
-            color: #333;
+            color: #096e33;
             text-align: center;
         }
 
@@ -76,7 +42,7 @@
 
         input[type="text"] {
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #050505;
             border-radius: 5px;
             margin-bottom: 10px;
         }

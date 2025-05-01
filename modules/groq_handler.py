@@ -33,3 +33,5 @@ def generate(query: str, docs: list[str]):
         messages=messages
     )
     return chat_response.choices[0].message.content
+
+

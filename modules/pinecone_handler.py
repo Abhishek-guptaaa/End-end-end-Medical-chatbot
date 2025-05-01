@@ -32,3 +32,5 @@ def upsert_embeddings(embedded_texts, index):
                              [item["values"] for item in batch], 
                              [item["metadata"] for item in batch]))
         index.upsert(vectors=to_upsert)
+
+

@@ -17,3 +17,6 @@ This project is an end-to-end solution for a medical chatbot using Pinecone, Lan
    ```bash
    git clone <repo_url>
    cd medical_chatbot
+
+
+project ko run karne ke liye sabse pehale hum main.py ko run karenge use bad app.py file ko

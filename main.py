@@ -23,3 +23,4 @@ embedded_texts = generate_embeddings(text_chunks, embeddings)
 # Upsert embeddings to Pinecone index
 upsert_embeddings(embedded_texts, index)
 print("Upserted text chunks into Pinecone index successfully.")
+
